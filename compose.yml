@@ -1,0 +1,40 @@
+version: '3'
+services:
+  app:
+    image: python:3.12
+    command: /bin/sh -c "while :; do sleep 10; done"
+    working_dir: /app
+    volumes:
+      - ./initdb.d:/docker-entrypoint-initdb.d
+
+  mysql57:
+    build:
+      context: ./mysql57
+    volumes:
+      - ./initdb.d:/docker-entrypoint-initdb.d
+
+  mysql80:
+    build:
+      context: ./mysql80
+    volumes:
+      - ./initdb.d:/docker-entrypoint-initdb.d
+
+  phpmyadmin57:
+    image: phpmyadmin
+    environment:
+      - PMA_ARBITRARY=1
+      - PMA_HOSTS=mysql57
+      - PMA_USER=root
+      - PMA_PASSWORD=password
+    ports:
+      - "8057:80"
+
+  phpmyadmin80:
+    image: phpmyadmin
+    environment:
+      - PMA_ARBITRARY=1
+      - PMA_HOSTS=mysql80
+      - PMA_USER=root
+      - PMA_PASSWORD=password
+    ports:
+      - "8080:80"
